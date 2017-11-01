@@ -1,0 +1,79 @@
+package org.toba.habco.timesheet.process;
+
+import java.util.logging.Level;
+
+import org.compiere.process.ProcessInfoParameter;
+import org.compiere.process.SvrProcess;
+import org.toba.habco.model.MBarge;
+import org.toba.habco.model.MContract;
+import org.toba.habco.model.MTugboat;
+
+public class HBC_ProcessChangeShip extends SvrProcess{
+
+	/*
+	 * 
+	 * HABCO-1683 Process Pergantian kapal
+	 */
+
+	int p_C_Contract_ID= 0;
+	int p_HBC_Tugboat_ID=0;
+	int p_HBC_Barge_ID=0;
+
+
+	@Override
+	protected void prepare() {
+		ProcessInfoParameter[] para = getParameter();
+		for (int i = 0; i < para.length; i++) {
+			String name = para[i].getParameterName();
+			if (para[i].getParameter() == null)
+				;
+			else if (name.equals("HBC_Tugboat_ID")){
+				p_HBC_Tugboat_ID = para[i].getParameterAsInt();
+			} else if (name.equals("HBC_Barge_ID")){
+				p_HBC_Tugboat_ID = para[i].getParameterAsInt();
+			}else
+				log.log(Level.SEVERE, "Unknown Parameter: " + name);
+		}
+		p_C_Contract_ID=getRecord_ID();		
+	}
+
+	@Override
+	protected String doIt() throws Exception {
+
+		if(p_C_Contract_ID==0){
+			return "Contract not selected";
+		}
+
+		boolean noTugboat = false;
+		boolean noBarge = false;
+		
+		if(p_HBC_Tugboat_ID==0)
+			noTugboat = true;
+		if (p_HBC_Barge_ID==0)
+			noBarge = true;
+
+		if (noTugboat && noBarge)
+			return "No Tugboat / Barge Selected";
+		
+		StringBuilder msg = new StringBuilder();
+		
+		MContract contract=  new MContract (getCtx(),p_C_Contract_ID,get_TrxName());	
+		if (!noTugboat) {
+			contract.setHBC_Tugboat_ID(p_HBC_Tugboat_ID);
+			MTugboat tb = new MTugboat(getCtx(), p_HBC_Tugboat_ID, get_TrxName());
+			msg.append("Tugboat Changed to ").append(tb.getValue());
+		}
+		if (!noBarge) {
+			contract.setHBC_Barge_ID(p_HBC_Barge_ID);
+			if (!noTugboat)
+				msg.append(",");
+			
+			MBarge ba = new MBarge(getCtx(), p_HBC_Barge_ID, get_TrxName());
+			msg.append(" Barge Changed to ").append(ba.getValue());
+		}
+			contract.saveEx();
+
+		return msg.toString();
+	}
+
+}

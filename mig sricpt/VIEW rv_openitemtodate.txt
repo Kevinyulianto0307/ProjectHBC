@@ -1,0 +1,65 @@
+-- View: rv_openitemtodate
+
+-- DROP VIEW rv_openitemtodate;
+
+CREATE OR REPLACE VIEW rv_openitemtodate AS 
+ SELECT i.ad_org_id,
+    i.ad_client_id,
+    i.documentno,
+    i.c_invoice_id,
+    i.c_order_id,
+    i.c_bpartner_id,
+    i.issotrx,
+    i.dateinvoiced,
+    i.dateacct,
+    p.netdays,
+    paymenttermduedate(i.c_paymentterm_id, i.dateinvoiced::timestamp with time zone) AS duedate,
+    paymenttermduedays(i.c_paymentterm_id, i.dateinvoiced::timestamp with time zone, getdate()) AS daysdue,
+    adddays(i.dateinvoiced::timestamp with time zone, p.discountdays) AS discountdate,
+    currencyround(i.grandtotal * p.discount / 100::numeric, i.c_currency_id, 'N'::character varying) AS discountamt,
+    i.grandtotal,
+    i.c_currency_id,
+    i.c_conversiontype_id,
+    i.c_paymentterm_id,
+    i.ispayschedulevalid,
+    NULL::numeric AS c_invoicepayschedule_id,
+    i.invoicecollectiontype,
+    i.c_campaign_id,
+    i.c_project_id,
+    i.c_activity_id,
+    i.orderreference
+   FROM rv_c_invoice i
+     JOIN c_paymentterm p ON i.c_paymentterm_id = p.c_paymentterm_id
+  WHERE i.ispayschedulevalid <> 'Y'::bpchar AND (i.docstatus = ANY (ARRAY['CO'::bpchar, 'CL'::bpchar]))
+UNION
+ SELECT i.ad_org_id,
+    i.ad_client_id,
+    i.documentno,
+    i.c_invoice_id,
+    i.c_order_id,
+    i.c_bpartner_id,
+    i.issotrx,
+    i.dateinvoiced,
+    i.dateacct,
+    daysbetween(ips.duedate::timestamp with time zone, i.dateinvoiced::timestamp with time zone) AS netdays,
+    ips.duedate,
+    daysbetween(getdate(), ips.duedate::timestamp with time zone) AS daysdue,
+    ips.discountdate,
+    ips.discountamt,
+    ips.dueamt AS grandtotal,
+    i.c_currency_id,
+    i.c_conversiontype_id,
+    i.c_paymentterm_id,
+    i.ispayschedulevalid,
+    ips.c_invoicepayschedule_id,
+    i.invoicecollectiontype,
+    i.c_campaign_id,
+    i.c_project_id,
+    i.c_activity_id,
+    i.orderreference
+   FROM rv_c_invoice i
+     JOIN c_invoicepayschedule ips ON i.c_invoice_id = ips.c_invoice_id
+  WHERE i.ispayschedulevalid = 'Y'::bpchar AND (i.docstatus = ANY (ARRAY['CO'::bpchar, 'CL'::bpchar])) AND ips.isvalid = 'Y'::bpchar;
+
+ALTER TABLE rv_openitemtodate
+  OWNER TO devina;

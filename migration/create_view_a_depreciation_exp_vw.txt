@@ -1,0 +1,54 @@
+-- View: a_depreciation_exp_vw
+
+-- DROP VIEW a_depreciation_exp_vw;
+
+CREATE OR REPLACE VIEW a_depreciation_exp_vw AS 
+ SELECT 
+
+    aa.value, aa.name,
+    a_depreciation_exp.a_depreciation_exp_id,
+    a_depreciation_exp.ad_client_id,
+    a_depreciation_exp.ad_org_id,
+    a_depreciation_exp.a_entry_type,
+    a_depreciation_exp.created,
+    a_depreciation_exp.dateacct,
+    a_depreciation_exp.expense,
+    a_depreciation_exp.isdepreciated,
+    a_depreciation_exp.processed,
+    a_depreciation_exp.updatedby,
+    a_depreciation_exp.updated,
+    a_depreciation_exp.postingtype,
+    a_depreciation_exp.isactive,
+    a_depreciation_exp.description,
+    a_depreciation_exp.createdby,
+    a_depreciation_exp.a_period,
+    a_depreciation_exp.a_asset_id,
+    a_depreciation_exp.a_depreciation_exp_uu,
+    a_depreciation_exp.dr_account_id AS dr_account,
+    a_depreciation_exp.cr_account_id AS cr_account,
+    a_depreciation_exp.expense_f,
+    a_depreciation_exp.processing,
+    a_depreciation_exp.help,
+    a_depreciation_exp.a_asset_cost,
+    a_depreciation_exp.a_accumulated_depr,
+    a_depreciation_exp.a_accumulated_depr_f,
+    a_depreciation_exp.uselifemonths,
+    a_depreciation_exp.uselifemonths_f,
+    a_depreciation_exp.a_asset_remaining,
+    a_depreciation_exp.a_asset_remaining_f,
+    a_depreciation_exp.a_asset_cost_delta,
+    a_depreciation_exp.a_accumulated_depr_delta,
+    a_depreciation_exp.a_accumulated_depr_f_delta,
+    a_depreciation_exp.a_asset_addition_id,
+    a_depreciation_exp.a_asset_disposed_id,
+    a_depreciation_exp.a_depreciation_entry_id,
+    a_depreciation_exp.a_account_number_acct,
+	aa.HBC_Tugboat_ID,
+	aa.HBC_Barge_ID,
+	aa.C_Campaign_ID
+   FROM a_depreciation_exp
+   JOIN a_asset aa ON aa.a_asset_id = a_depreciation_exp.a_asset_id;
+  --WHERE a_depreciation_exp.processed = 'Y'::bpchar;
+
+ALTER TABLE a_depreciation_exp_vw
+  OWNER TO devina;

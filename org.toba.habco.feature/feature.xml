@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.toba.habco.feature"
+      label="org.toba.habco.feature"
+      version="1.0.0.qualifier"
+      plugin="org.toba.habco">
+
+   <description url="http://www.example.com/description">
+      [Enter Feature Description here.]
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <requires>
+      <import plugin="org.adempiere.base" version="3.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.osgi.services" version="3.4.0" match="greaterOrEqual"/>
+      <import plugin="org.zkoss.zk.library" version="7.0.7" match="greaterOrEqual"/>
+      <import plugin="org.adempiere.ui" version="3.1.0" match="greaterOrEqual"/>
+      <import plugin="org.adempiere.ui.zk" version="3.1.0" match="greaterOrEqual"/>
+      <import plugin="org.adempiere.plugin.utils" version="3.1.0" match="greaterOrEqual"/>
+      <import plugin="org.adempiere.base.callout" version="2.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.osgi"/>
+   </requires>
+
+   <plugin
+         id="org.toba.habco"
+         download-size="0"
+         install-size="0"
+         version="1.0.0.qualifier"
+         unpack="false"/>
+
+</feature>

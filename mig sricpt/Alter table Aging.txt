@@ -1,0 +1,5 @@
+ALTER TABLE t_aging
+add column dateinvoiced timestamp without time zone; 
+
+alter table t_aging
+add column orderreference character varying (30);
